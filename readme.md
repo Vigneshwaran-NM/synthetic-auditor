@@ -1,5 +1,7 @@
-# 🔒 Synthetic Auditor: Offline AI-Powered Security Intelligence
+#  Synthetic Auditor: Offline AI-Powered Security Intelligence
 
+<div align="center">
+  
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Python](https://img.shields.io/badge/python-3.11+-blue)
@@ -8,13 +10,11 @@
 ![Ollama](https://img.shields.io/badge/ollama-latest-orange)
 ![GPU](https://img.shields.io/badge/GPU-required-important)
 
----
-
-[Demo](#-demo) • [Key Features](#-key-features) • [Architecture Overview](#-architecture-overview) • [User Guide](#-user-guide) • [Contributors](#-contributors)
+[Demo](#-demo) • [Key Features](#-key-features) • [Architecture](#-architecture) • [User Guide](#-user-guide) • [Contributors](#-contributors)
 
 **Enterprise-grade vulnerability analysis with 100% data sovereignty. Transform raw security scans into executive and technical-ready reports using local AI—no cloud, no data exfiltration, complete privacy.**
 
----
+<div>
 
 ## 🎯 Why Synthetic Auditor?
 
@@ -123,7 +123,7 @@ Deep technical breakdown with compliance mapping.
 
 ---
 
-## 🏗️ Architecture Overview
+## 🏗️ Architecture
 ---
 
 ```mermaid
