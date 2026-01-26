@@ -14,7 +14,7 @@
 
 **Enterprise-grade vulnerability analysis with 100% data sovereignty. Transform raw security scans into executive and technical-ready reports using local AI—no cloud, no data exfiltration, complete privacy.**
 
-<div>
+</div>
 
 ## 🎯 Why Synthetic Auditor?
 
