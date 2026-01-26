@@ -39,49 +39,49 @@ In an era of increasing data breaches and regulatory scrutiny, security consulta
 > Below are real screenshots from the running **Synthetic Auditor** system — fully offline.
 
 ### 🏠 Landing Page
-<img src="synthetic-auditor-screenshots/home.png" width="900"/>
+<img src="synthetic-auditor-screenshots/home.png" width="400"/>
 
 ---
 
 ### 📤 Upload Vulnerability Scans
 Supports ZIP, Nessus XML, Burp JSON, PCAP, logs, and CSV.
 
-<img src="synthetic-auditor-screenshots/upload.png" width="900"/>
+<img src="synthetic-auditor-screenshots/upload.png" width="400"/>
 
 ---
 
 ### 📋 Vulnerability Findings Dashboard
 Severity-based grouping with AI confidence scores.
 
-<img src="synthetic-auditor-screenshots/findings.png" width="900"/>
+<img src="synthetic-auditor-screenshots/findings.png" width="400"/>
 
 ---
 
 ### 🔍 Detailed Finding – SQL Injection
 Business impact, technical analysis, and remediation.
 
-<img src="synthetic-auditor-screenshots/detailed-findings-1.png" width="900"/>
+<img src="synthetic-auditor-screenshots/detailed-findings-1.png" width="400"/>
 
 ---
 
 ### 🔐 Detailed Finding – SSL Certificate Expiry
 Risk prioritization with actionable remediation steps.
 
-<img src="synthetic-auditor-screenshots/detailed-findings-2.png" width="900"/>
+<img src="synthetic-auditor-screenshots/detailed-findings-2.png" width="400"/>
 
 ---
 
 ### 🔗 Evidence Traceability
 Every AI claim is backed by verifiable evidence.
 
-<img src="synthetic-auditor-screenshots/evidence-trace.png" width="900"/>
+<img src="synthetic-auditor-screenshots/evidence-trace.png" width="400"/>
 
 ---
 
 ### 📄 Executive Report (Business View)
 High-level risk summary for leadership.
 
-<img src="synthetic-auditor-screenshots/exec-report.png" width="900"/>
+<img src="synthetic-auditor-screenshots/exec-report.png" width="400"/>
 
 ---
 
@@ -89,8 +89,8 @@ High-level risk summary for leadership.
 Deep technical breakdown with compliance mapping.
 
 <p align="center">
-  <img src="synthetic-auditor-screenshots/tech-report-1.png" width="420"/>
-  <img src="synthetic-auditor-screenshots/tech-report-2.png" width="420"/>
+  <img src="synthetic-auditor-screenshots/tech-report-1.png" width="220"/>
+  <img src="synthetic-auditor-screenshots/tech-report-2.png" width="220"/>
 </p>
 
 ---
@@ -461,10 +461,6 @@ If you use Synthetic Auditor in your research or business, please cite:
 <div align="center">
 
 ### ⭐ **Star us on GitHub** ⭐
-
-[![Star History Chart](https://api.star-history.com/svg?repos=Vigneshwaran-NM/synthetic-auditor&type=Date)](https://star-history.com/#Vigneshwaran-NM/synthetic-auditor&Date)
-
-## Star History
 
 <a href="https://www.star-history.com/#Vigneshwaran-NM/synthetic-auditor&type=date&legend=top-left">
  <picture>
