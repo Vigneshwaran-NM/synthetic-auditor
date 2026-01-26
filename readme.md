@@ -39,14 +39,14 @@ In an era of increasing data breaches and regulatory scrutiny, security consulta
 > Below are real screenshots from the running **Synthetic Auditor** system — fully offline.
 
 ### 🏠 Landing Page
-<img src="synthetic-auditor-screenshots/home.png" width="600"/>
+<img src="synthetic-auditor-screenshots/home.png" width="700"/>
 
 ---
 
 ### 📤 Upload Vulnerability Scans
 Supports ZIP, Nessus XML, Burp JSON, PCAP, logs, and CSV.
 
-<img src="synthetic-auditor-screenshots/upload.png" width="600"/>
+<img src="synthetic-auditor-screenshots/upload.png" width="700"/>
 
 ---
 
