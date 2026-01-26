@@ -39,49 +39,49 @@ In an era of increasing data breaches and regulatory scrutiny, security consulta
 > Below are real screenshots from the running **Synthetic Auditor** system — fully offline.
 
 ### 🏠 Landing Page
-<img src="synthetic-auditor-screenshots/home.png" width="700"/>
+<img src="synthetic-auditor-screenshots/home.png" width="600"/>
 
 ---
 
 ### 📤 Upload Vulnerability Scans
 Supports ZIP, Nessus XML, Burp JSON, PCAP, logs, and CSV.
 
-<img src="synthetic-auditor-screenshots/upload.png" width="700"/>
+<img src="synthetic-auditor-screenshots/upload.png" width="600"/>
 
 ---
 
 ### 📋 Vulnerability Findings Dashboard
 Severity-based grouping with AI confidence scores.
 
-<img src="synthetic-auditor-screenshots/findings.png" width="700"/>
+<img src="synthetic-auditor-screenshots/findings.png" width="600"/>
 
 ---
 
 ### 🔍 Detailed Finding – SQL Injection
 Business impact, technical analysis, and remediation.
 
-<img src="synthetic-auditor-screenshots/detailed-findings-1.png" width="700"/>
+<img src="synthetic-auditor-screenshots/detailed-findings-1.png" width="600"/>
 
 ---
 
 ### 🔐 Detailed Finding – SSL Certificate Expiry
 Risk prioritization with actionable remediation steps.
 
-<img src="synthetic-auditor-screenshots/detailed-findings-2.png" width="600"/>
+<img src="synthetic-auditor-screenshots/detailed-findings-2.png" width="500"/>
 
 ---
 
 ### 🔗 Evidence Traceability
 Every AI claim is backed by verifiable evidence.
 
-<img src="synthetic-auditor-screenshots/evidence-trace.png" width="600"/>
+<img src="synthetic-auditor-screenshots/evidence-trace.png" width="500"/>
 
 ---
 
 ### 📄 Executive Report (Business View)
 High-level risk summary for leadership.
 
-<img src="synthetic-auditor-screenshots/exec-report.png" width="600"/>
+<img src="synthetic-auditor-screenshots/exec-report.png" width="500"/>
 
 ---
 
