@@ -410,26 +410,26 @@ npm run dev      # Frontend logs (terminal)
 ```
 ---
 
-## 👥 Contributors
+# 👥 Contributors
 
 ### **Vigneshwaran N M**
 
-🔗 **GitHub:** (https://github.com/Vigneshwaran-NM)
-🔗 **LinkedIn:** (https://www.linkedin.com/in/vigneshwaran-nm)
+🔗 [GitHub](https://github.com/Vigneshwaran-NM)
+🔗 [LinkedIn](https://www.linkedin.com/in/vigneshwaran-nm)
 
 ---
 
 ### **Santosh P**
 
-🔗 **GitHub:** (https://github.com/SantoshP-2003)
-🔗 **LinkedIn:** (https://www.linkedin.com/in/santosh-p-673767302)
+🔗 [GitHub](https://github.com/SantoshP-2003)
+🔗 [LinkedIn](https://www.linkedin.com/in/santosh-p-673767302)
 
 ---
 
 ### **Vijay P**
 
-🔗 **GitHub:** (https://github.com/vijayp092105)
-🔗 **LinkedIn:** (https://www.linkedin.com/in/vijay-p-79793a359)
+🔗 [GitHub](https://github.com/vijayp092105)
+🔗 [LinkedIn](https://www.linkedin.com/in/vijay-p-79793a359)
 
 ---
 
