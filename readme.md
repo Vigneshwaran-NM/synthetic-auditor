@@ -12,7 +12,7 @@
 
 **Enterprise-grade vulnerability analysis with 100% data sovereignty. Transform raw security scans into executive and technical-ready reports using local AI—no cloud, no data exfiltration, complete privacy.**
 
-[Demo](#-demo) • [Key Features](#-key-features) • [Architecture](#-Architecture) • [User Guide](#-user-guide) • [Contributors](#-contributors)
+[Demo](#-demo) • [Key Features](#-key-features) • [Architecture](#-architecture) • [User Guide](#-user-guide) • [Contributors](#-contributors)
 
 </div>
 
@@ -122,7 +122,6 @@ Deep technical breakdown with compliance mapping.
 - **REST API**: Full programmatic access to all features
 
 ---
-
 ## 🏗️ Architecture
 ---
 
