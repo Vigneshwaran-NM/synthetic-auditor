@@ -7,8 +7,10 @@
 ![FastAPI](https://img.shields.io/badge/fastapi-0.104.1-009688)
 ![Ollama](https://img.shields.io/badge/ollama-latest-orange)
 ![GPU](https://img.shields.io/badge/GPU-required-important)
+---
+[Demo](#-demo) • [Features](#-features) • [Architecture](#-architecture) • [Tech Stack](#-technology-stack) • [Download](#-download)
 
-**Enterprise-grade vulnerability analysis with 100% data sovereignty. Transform raw security scans into executive-ready reports using local AI—no cloud, no data exfiltration, complete privacy.**
+**Enterprise-grade vulnerability analysis with 100% data sovereignty. Transform raw security scans into executive and technical-ready reports using local AI—no cloud, no data exfiltration, complete privacy.**
 
 ---
 
@@ -188,7 +190,7 @@ zip test-data.zip test-scan.json
 #    - Download reports
 ```
 
-**Expected Output:**
+**Expected Output For Sample Workflow:**
 - ✅ AI identifies SQL injection vulnerability
 - ✅ Business impact: "Risk to 100K user accounts"
 - ✅ Technical details: "Parameter 'username' vulnerable"
@@ -226,24 +228,6 @@ MAX_FILE_SIZE_MB = 100         # Limit upload size
 ALLOWED_ORIGINS = ["http://localhost:5173"]  # CORS settings
 REQUIRE_API_KEY = False        # Enable for production
 ```
-
----
-
-## 📊 Performance Benchmarks
-
-| Hardware | Findings/Minute | Report Generation | Memory Usage |
-|----------|----------------|-------------------|--------------|
-| RTX 4060 | 6-8 findings | 3-5 seconds | 4-6GB VRAM |
-| RTX 3080 | 5-7 findings | 3-5 seconds | 6-8GB VRAM |
-| CPU (16 cores) | 1-2 findings | 8-12 seconds | 10-12GB RAM |
-| CPU (8 cores) | 0.5-1 findings | 12-18 seconds | 8-10GB RAM |
-
-**Optimization Tips:**
-- Use `.zip` archives for multiple files
-- Set min severity to "High" for faster analysis
-- Close other GPU applications during processing
-- Increase swap space for CPU-only setups
-
 ---
 
 ## 🛠️ Developer Guide
@@ -362,27 +346,28 @@ python cli.py api
 tail -f app.log  # Backend logs
 npm run dev      # Frontend logs (terminal)
 ```
+---
 
 ## 👥 Contributors
 
 ### **Vigneshwaran N M**
 
-* 🔗 **GitHub:** [https://github.com/Vigneshwaran-NM](https://github.com/Vigneshwaran-NM)
-* 🔗 **LinkedIn:** [https://www.linkedin.com/in/vigneshwaran-nm](https://www.linkedin.com/in/vigneshwaran-nm)
+🔗 **GitHub:** (https://github.com/Vigneshwaran-NM)
+🔗 **LinkedIn:** (https://www.linkedin.com/in/vigneshwaran-nm)
 
 ---
 
 ### **Santosh P**
 
-* 🔗 **GitHub:** [https://github.com/SantoshP-2003](https://github.com/SantoshP-2003)
-* 🔗 **LinkedIn:** [https://www.linkedin.com/in/santosh-p-673767302](https://www.linkedin.com/in/santosh-p-673767302)
+🔗 **GitHub:** (https://github.com/SantoshP-2003)
+🔗 **LinkedIn:** (https://www.linkedin.com/in/santosh-p-673767302)
 
 ---
 
 ### **Vijay P**
 
-* 🔗 **GitHub:** [https://github.com/vijayp092105](https://github.com/vijayp092105)
-* 🔗 **LinkedIn:** [https://www.linkedin.com/in/vijay-p-79793a359](https://www.linkedin.com/in/vijay-p-79793a359)
+🔗 **GitHub:** (https://github.com/vijayp092105)
+🔗 **LinkedIn:** (https://www.linkedin.com/in/vijay-p-79793a359)
 
 ---
 
@@ -395,30 +380,15 @@ For commercial licensing or enterprise support, please contact [business@example
 
 ---
 
-## 📞 Support
-
-- **Documentation**: [docs.synthetic-auditor.com](https://docs.synthetic-auditor.com)
-- **Issues**: [GitHub Issues](https://github.com/Vigneshwaran-NM/synthetic-auditor/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/Vigneshwaran-NM/synthetic-auditor/discussions)
-- **Email**: [support@synthetic-auditor.com](mailto:support@synthetic-auditor.com)
-
-### Enterprise Support
-- **Dedicated SLA**: 24/7 support available
-- **Custom Development**: Tailored to your workflow
-- **On-Premise Deployment**: Fully managed installation
-- **Training & Certification**: Team enablement programs
-
----
-
 ## 🎯 Citation
 
 If you use Synthetic Auditor in your research or business, please cite:
 
 ```bibtex
-@software{synthetic_auditor_2024,
+@software{synthetic_auditor_2026,
   title = {Synthetic Auditor: Offline AI-Powered Security Intelligence},
-  author = {Your Name and Contributors},
-  year = {2024},
+  author = {VigneshwaranNM,SantoshP,VijayP},
+  year = {2026},
   url = {https://github.com/Vigneshwaran-NM/synthetic-auditor},
   version = {1.0.0}
 }
@@ -431,6 +401,16 @@ If you use Synthetic Auditor in your research or business, please cite:
 ### ⭐ **Star us on GitHub** ⭐
 
 [![Star History Chart](https://api.star-history.com/svg?repos=Vigneshwaran-NM/synthetic-auditor&type=Date)](https://star-history.com/#Vigneshwaran-NM/synthetic-auditor&Date)
+
+## Star History
+
+<a href="https://www.star-history.com/#Vigneshwaran-NM/synthetic-auditor&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Vigneshwaran-NM/synthetic-auditor&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Vigneshwaran-NM/synthetic-auditor&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Vigneshwaran-NM/synthetic-auditor&type=date&legend=top-left" />
+ </picture>
+</a>
 
 **"Transform vulnerability analysis without compromising privacy"**
 
