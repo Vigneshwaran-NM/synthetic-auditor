@@ -8,7 +8,7 @@
 ![Ollama](https://img.shields.io/badge/ollama-latest-orange)
 ![GPU](https://img.shields.io/badge/GPU-required-important)
 ---
-[Demo](#-demo) • [Features](#-features) • [Architecture Overview](#-Architecture-Overview) • [Tech Stack](#-technology-stack) • [Contributors](#-Contributors)
+[Key Features](#-key-features) • [Architecture Overview](#-Architecture-Overview) • [Tech Stack](#-technology-stack) • [Contributors](#-Contributors)
 
 **Enterprise-grade vulnerability analysis with 100% data sovereignty. Transform raw security scans into executive and technical-ready reports using local AI—no cloud, no data exfiltration, complete privacy.**
 
@@ -61,7 +61,7 @@ In an era of increasing data breaches and regulatory scrutiny, security consulta
 
 ---
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 ```mermaid
 graph TB
