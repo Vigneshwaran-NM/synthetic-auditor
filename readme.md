@@ -10,7 +10,7 @@
 
 ---
 
-[Demo](#-demo) • [Key Features](#-key-features) • [Architecture Overview](#-architecture-overview) • [Tech Stack](#-technology-stack) • [Contributors](#-contributors)
+[Demo](#-demo) • [Key Features](#-key-features) • [Architecture Overview](#-architecture-overview) • [User Guide](#-user-guide) • [Contributors](#-contributors)
 
 **Enterprise-grade vulnerability analysis with 100% data sovereignty. Transform raw security scans into executive and technical-ready reports using local AI—no cloud, no data exfiltration, complete privacy.**
 
@@ -124,6 +124,7 @@ Deep technical breakdown with compliance mapping.
 ---
 
 ## 🏗️ Architecture Overview
+---
 
 ```mermaid
 graph TB
