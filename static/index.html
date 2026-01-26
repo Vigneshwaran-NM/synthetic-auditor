@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synthetic Auditor - Offline AI Security Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-dark: #1a365d;
+            --primary-blue: #2b6cb0;
+            --primary-light: #4299e1;
+            --accent-green: #38a169;
+            --accent-red: #e53e3e;
+            --accent-orange: #dd6b20;
+            --bg-gray: #f7fafc;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--card-shadow);
+        }
+        
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .badge-critical { background: linear-gradient(135deg, #fed7d7, #fc8181); color: #742a2a; }
+        .badge-high { background: linear-gradient(135deg, #feebc8, #ed8936); color: #7b341e; }
+        .badge-medium { background: linear-gradient(135deg, #fefcbf, #ecc94b); color: #744210; }
+        .badge-low { background: linear-gradient(135deg, #c6f6d5, #48bb78); color: #22543d; }
+        
+        .trust-indicator {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin: 0 auto;
+        }
+        
+        .trust-high { background: conic-gradient(#38a169 0% 85%, #e2e8f0 85% 100%); color: #22543d; }
+        .trust-medium { background: conic-gradient(#d69e2e 0% 65%, #e2e8f0 65% 100%); color: #744210; }
+        .trust-low { background: conic-gradient(#e53e3e 0% 45%, #e2e8f0 45% 100%); color: #742a2a; }
+        
+        .evidence-tag {
+            font-family: 'Monaco', 'Courier New', monospace;
+            background: #edf2f7;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            border-left: 3px solid var(--primary-blue);
+        }
+        
+        .offline-badge {
+            background: linear-gradient(135deg, #c6f6d5, #38a169);
+            color: #22543d;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .file-drop-zone {
+            border: 3px dashed #cbd5e0;
+            border-radius: 12px;
+            padding: 3rem;
+            text-align: center;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+        
+        .file-drop-zone.dragover {
+            border-color: var(--primary-blue);
+            background: #ebf8ff;
+        }
+        
+        .report-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .report-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .finding-card {
+            border-left: 4px solid;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .finding-card:hover {
+            transform: translateX(4px);
+        }
+        
+        .finding-critical { border-color: var(--accent-red); background: linear-gradient(to right, #fff5f5, white); }
+        .finding-high { border-color: var(--accent-orange); background: linear-gradient(to right, #fffaf0, white); }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin: 2rem 0;
+        }
+        
+        .step-indicator:before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #e2e8f0;
+            z-index: 1;
+        }
+        
+        .step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            width: 80px;
+        }
+        
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+            color: #718096;
+            transition: all 0.3s;
+        }
+        
+        .step.active .step-circle {
+            background: var(--primary-blue);
+            color: white;
+            box-shadow: 0 0 0 8px rgba(66, 153, 225, 0.2);
+        }
+        
+        .step.completed .step-circle {
+            background: var(--accent-green);
+            color: white;
+        }
+        
+        .loading-pulse {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .ai-response {
+            background: linear-gradient(135deg, #ebf8ff, #bee3f8);
+            border-radius: 12px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ai-response:before {
+            content: '🤖 AI Analysis';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.75rem;
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <!-- Header -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="glass-card p-4 d-flex align-items-center justify-content-between">
+                    <div>
+                        <h1 class="h3 mb-1 fw-bold text-dark">
+                            <i class="fas fa-shield-alt me-2 text-primary"></i>
+                            Synthetic Auditor
+                        </h1>
+                        <p class="text-muted mb-0">Offline AI-Powered Vulnerability Analysis</p>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <span class="offline-badge">
+                            <i class="fas fa-wifi-slash me-1"></i> 100% Offline
+                        </span>
+                        <div class="text-end">
+                            <small class="text-muted d-block">Model: llama3.1:8b</small>
+                            <small class="text-muted d-block">GPU: RTX 4060</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Left Panel - Upload & Configuration -->
+            <div class="col-lg-4">
+                <div class="glass-card p-4 mb-4">
+                    <h5 class="fw-bold mb-4">
+                        <i class="fas fa-upload me-2"></i>Upload Security Scans
+                    </h5>
+                    
+                    <div class="file-drop-zone mb-4" id="dropZone">
+                        <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                        <p class="mb-2">Drop vulnerability scan files here</p>
+                        <p class="text-muted small mb-3">Supports: ZIP, XML (Nessus), JSON (Burp)</p>
+                        <button class="btn btn-primary" id="browseBtn">
+                            <i class="fas fa-folder-open me-2"></i>Browse Files
+                        </button>
+                        <input type="file" id="fileInput" class="d-none" multiple accept=".zip,.xml,.json">
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-building me-2"></i>Company Context
+                        </label>
+                        <textarea class="form-control" id="companyContext" rows="3" 
+                                  placeholder="E.g., FinTech startup processing payments for 100K users, PCI-DSS compliant, AWS infrastructure...">
+                        </textarea>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-filter me-2"></i>Severity Filter
+                        </label>
+                        <select class="form-select" id="severityFilter">
+                            <option value="High">High & Critical Only</option>
+                            <option value="Medium">Medium & Above</option>
+                            <option value="Low">All Severities</option>
+                        </select>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button class="btn btn-lg btn-primary" id="analyzeBtn" disabled>
+                            <i class="fas fa-robot me-2"></i>Start AI Analysis
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Processing Steps -->
+                <div class="glass-card p-4">
+                    <h5 class="fw-bold mb-4">
+                        <i class="fas fa-tasks me-2"></i>Processing Pipeline
+                    </h5>
+                    <div class="step-indicator">
+                        <div class="step active" id="step1">
+                            <div class="step-circle">1</div>
+                            <div class="step-label small">Upload</div>
+                        </div>
+                        <div class="step" id="step2">
+                            <div class="step-circle">2</div>
+                            <div class="step-label small">Parse</div>
+                        </div>
+                        <div class="step" id="step3">
+                            <div class="step-circle">3</div>
+                            <div class="step-label small">AI Analyze</div>
+                        </div>
+                        <div class="step" id="step4">
+                            <div class="step-circle">4</div>
+                            <div class="step-label small">Generate</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Panel - Results & Reports -->
+            <div class="col-lg-8">
+                <!-- Status Card -->
+                <div class="glass-card p-4 mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0">
+                            <i class="fas fa-chart-line me-2"></i>Analysis Results
+                        </h5>
+                        <div class="text-end">
+                            <small class="text-muted" id="sessionInfo">Session: --</small>
+                            <div class="small" id="processingTime">Processing time: --</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Statistics Cards -->
+                <div class="row mb-4" id="statsCards" style="display: none;">
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <h2 class="fw-bold mb-0" id="totalFindings">0</h2>
+                            <p class="text-muted small mb-0">Total Findings</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <h2 class="fw-bold mb-0 text-danger" id="criticalCount">0</h2>
+                            <p class="text-muted small mb-0">Critical</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <h2 class="fw-bold mb-0 text-warning" id="highCount">0</h2>
+                            <p class="text-muted small mb-0">High</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <div class="trust-indicator trust-low" id="trustIndicator">
+                                <span>0%</span>
+                            </div>
+                            <p class="text-muted small mt-2 mb-0">Confidence</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Findings List -->
+                <div class="glass-card p-4 mb-4" id="findingsSection" style="display: none;">
+                    <h5 class="fw-bold mb-3">
+                        <i class="fas fa-bug me-2"></i>Vulnerability Findings
+                        <span class="badge bg-primary ms-2" id="findingsCount">0</span>
+                    </h5>
+                    <div id="findingsList">
+                        <!-- Findings will be populated here -->
+                    </div>
+                </div>
+                
+                <!-- Report Generation -->
+                <div class="glass-card p-4" id="reportSection" style="display: none;">
+                    <h5 class="fw-bold mb-4">
+                        <i class="fas fa-file-pdf me-2"></i>Generate Reports
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="report-card p-4 text-center h-100">
+                                <div class="mb-3">
+                                    <i class="fas fa-user-tie fa-3x text-primary"></i>
+                                </div>
+                                <h6 class="fw-bold">Executive Report</h6>
+                                <p class="text-muted small mb-3">Business-focused summary for leadership</p>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-primary btn-sm" id="executivePdfBtn">
+                                        <i class="fas fa-download me-1"></i>Download PDF
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm" id="executivePreviewBtn">
+                                        <i class="fas fa-eye me-1"></i>Preview
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="report-card p-4 text-center h-100">
+                                <div class="mb-3">
+                                    <i class="fas fa-code fa-3x text-success"></i>
+                                </div>
+                                <h6 class="fw-bold">Technical Report</h6>
+                                <p class="text-muted small mb-3">Detailed analysis for security teams</p>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-success btn-sm" id="technicalPdfBtn">
+                                        <i class="fas fa-download me-1"></i>Download PDF
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm" id="technicalPreviewBtn">
+                                        <i class="fas fa-eye me-1"></i>Preview
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <button class="btn btn-primary" id="generateAllBtn">
+                            <i class="fas fa-file-archive me-2"></i>Generate Both Reports (ZIP)
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Loading State -->
+                <div class="glass-card p-5 text-center" id="loadingState">
+                    <div class="loading-pulse">
+                        <i class="fas fa-robot fa-4x text-primary mb-4"></i>
+                        <h5 class="fw-bold mb-3">AI Analysis in Progress</h5>
+                        <p class="text-muted mb-4">Processing vulnerability scans with local LLM...</p>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                 style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="glass-card p-3 text-center">
+                    <p class="small text-muted mb-0">
+                        <i class="fas fa-lock me-1"></i> All processing occurs 100% offline on your machine.
+                        No data leaves your system. Powered by Ollama & Local LLM.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

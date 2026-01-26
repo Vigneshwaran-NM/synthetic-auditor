@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+    <NessusClientData_v2>
+        <Report>
+            <ReportHost name="192.168.1.100">
+                <ReportItem port="443" svc_name="https" protocol="tcp" 
+                            severity="4" pluginID="12345" pluginName="SSL Certificate Expired">
+                    <description>SSL certificate will expire in 30 days.</description>
+                    <plugin_output>Certificate expiry: 2024-12-31</plugin_output>
+                    <cve>CVE-2023-45678</cve>
+                </ReportItem>
+            </ReportHost>
+        </Report>
+    </NessusClientData_v2>

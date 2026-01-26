@@ -1,0 +1,10 @@
+{
+  "findings": [
+    {
+      "name": "Test SQL Injection",
+      "severity": "Critical",
+      "description": "Test vulnerability",
+      "cve": "CVE-2024-99999"
+    }
+  ]
+}

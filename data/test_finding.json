@@ -1,0 +1,28 @@
+[
+        {
+            "name": "SQL Injection",
+            "severity": "High",
+            "description": "SQL injection vulnerability in login form",
+            "cve": "CVE-2023-12345",
+            "evidence": {
+                "url": "https://example.com/login",
+                "parameter": "username",
+                "payload": "' OR '1'='1"
+            }
+        },
+        {
+            "name": "XSS Vulnerability",
+            "severity": "Critical",
+            "description": "Cross-site scripting in search functionality",
+            "evidence": {
+                "url": "https://example.com/search",
+                "parameter": "q",
+                "payload": "<script>alert(1)</script>"
+            }
+        },
+        {
+            "name": "Info Leak",
+            "severity": "Low",
+            "description": "Directory listing enabled"
+        }
+    ]

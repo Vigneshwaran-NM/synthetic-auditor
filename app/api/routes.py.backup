@@ -1,0 +1,422 @@
+"""
+FastAPI routes for the Synthetic Auditor API.
+"""
+import shutil
+from pathlib import Path
+from typing import List
+from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks
+from fastapi.responses import FileResponse, JSONResponse
+
+from app.api.models import (
+    ProcessingRequest, ProcessingResponse, ReportRequest,
+    HealthResponse, ErrorResponse
+)
+from app.core.evidence import EvidenceRegistry
+from app.ingestion.parser import ScanParser
+from app.processing.analyzer import VulnerabilityAnalyzer
+from app.reporting.generator import ReportGenerator
+from app.core.config import config
+from app.core.llm_client import LLMClient
+from types import MappingProxyType
+from enum import Enum
+
+import zipfile
+import tempfile
+import uuid
+import json
+import time
+import os
+
+router = APIRouter(prefix="/api/v1", tags=["auditor"])
+
+# In-memory session store (in production, use Redis or database)
+_sessions = {}
+
+def make_json_safe(obj):
+    """
+    Recursively convert any Python object into JSON-serializable data.
+    Handles custom classes, enums, and mappingproxy objects.
+    """
+    if obj is None:
+        return None
+
+    # Basic JSON types
+    if isinstance(obj, (str, int, float, bool)):
+        return obj
+
+    # Dict-like
+    if isinstance(obj, dict):
+        return {str(k): make_json_safe(v) for k, v in obj.items()}
+
+    # mappingproxy (read-only dict)
+    if isinstance(obj, MappingProxyType):
+        return {str(k): make_json_safe(v) for k, v in obj.items()}
+
+    # List / tuple / set
+    if isinstance(obj, (list, tuple, set)):
+        return [make_json_safe(v) for v in obj]
+
+    # Enum
+    if isinstance(obj, Enum):
+        return obj.value
+
+    # Custom object
+    if hasattr(obj, "__dict__"):
+        return make_json_safe(vars(obj))
+
+    # Fallback: string representation
+    return str(obj)
+
+@router.get("/health", response_model=HealthResponse)
+async def health_check():
+    """Check system health and dependencies."""
+    import requests
+
+    # -----------------------------
+    # Check Ollama via HTTP API
+    # -----------------------------
+    try:
+        resp = requests.get(
+            "http://127.0.0.1:11434/api/tags",
+            timeout=2
+        )
+        if resp.status_code == 200:
+            data = resp.json()
+            models = [m.get("name") for m in data.get("models", [])]
+            ollama_available = True
+            ollama_operational = True
+        else:
+            models = []
+            ollama_available = False
+            ollama_operational = False
+    except Exception as e:
+        print(f"Ollama health check error: {e}")
+        models = []
+        ollama_available = False
+        ollama_operational = False
+
+    # -----------------------------
+    # Check GPU availability
+    # -----------------------------
+    try:
+        import torch
+        gpu_available = torch.cuda.is_available()
+    except Exception:
+        gpu_available = False
+
+    # -----------------------------
+    # Check disk space
+    # -----------------------------
+    try:
+        import shutil
+        disk_usage = shutil.disk_usage(".")
+        disk_space_mb = disk_usage.free / (1024 * 1024)
+    except Exception:
+        disk_space_mb = 0
+
+    # -----------------------------
+    # Determine overall status
+    # -----------------------------
+    if ollama_available and ollama_operational:
+        status = "healthy"
+    elif ollama_available:
+        status = "degraded"
+    else:
+        status = "unavailable"
+
+    return HealthResponse(
+        status=status,
+        ollama_available=ollama_available and ollama_operational,
+        models=models,
+        gpu_available=gpu_available,
+        disk_space_mb=disk_space_mb
+    )
+
+@router.post("/process", response_model=ProcessingResponse)
+async def process_vulnerability_scans(
+    background_tasks: BackgroundTasks,
+    files: List[UploadFile] = File(..., description="Vulnerability scan files (ZIP, XML, JSON)"),
+    request: ProcessingRequest = None
+):
+    """
+    Process vulnerability scan files and generate analysis.
+    
+    This endpoint:
+    1. Accepts scan files (ZIP, XML, JSON)
+    2. Extracts and filters High/Critical findings
+    3. Analyzes with local LLM
+    4. Stores results in session
+    5. Returns session ID for report generation
+    """
+    if request is None:
+        request = ProcessingRequest()
+    
+    session_id = str(uuid.uuid4())[:8]
+    temp_dir = None
+    
+    try:
+        start_time = time.time()
+        
+        # Create temporary directory for uploaded files
+        temp_dir = Path(tempfile.mkdtemp(prefix=f"audit_{session_id}_"))
+        
+        # Save uploaded files
+        saved_files = []
+        for file in files:
+            if file.filename:
+                file_path = temp_dir / file.filename
+                with open(file_path, "wb") as f:
+                    content = await file.read()
+                    f.write(content)
+                saved_files.append(file_path)
+        
+        if not saved_files:
+            raise HTTPException(status_code=400, detail="No valid files uploaded")
+        
+        # Initialize evidence registry and parser
+        registry = EvidenceRegistry()
+        parser = ScanParser(registry)
+        
+        # Process each file
+        for file_path in saved_files:
+            if file_path.suffix.lower() == '.zip':
+                parser.process_zip(file_path)
+            elif file_path.suffix.lower() in ['.xml', '.json']:
+                parser._process_file(file_path)
+        
+        # Check if we found any vulnerabilities
+        filtered_findings = registry.get_findings_by_severity()
+        if not filtered_findings:
+            return ProcessingResponse(
+                status="no_findings",
+                session_id=session_id,
+                findings_count=0,
+                analysis_time=time.time() - start_time,
+                avg_trust_score=0,
+                errors=["No High or Critical severity findings found"]
+            )
+        
+        # Analyze with LLM
+        analyzer = VulnerabilityAnalyzer(company_context=request.company_context)
+        analysis_result = analyzer.analyze_findings(registry)
+        
+        # Get report data
+        report_data = analyzer.get_report_data()
+        
+        # Store session data
+        _sessions[session_id] = {
+            "registry": registry,
+            "analyzer": analyzer,
+            "report_data": report_data,
+            "created_at": time.time(),
+            "company_context": request.company_context
+        }
+        
+        analysis_time = time.time() - start_time
+        
+        # Cleanup temp files in background
+        background_tasks.add_task(cleanup_temp_dir, temp_dir)
+        
+        return ProcessingResponse(
+            status="completed",
+            session_id=session_id,
+            findings_count=analysis_result["findings_analyzed"],
+            analysis_time=analysis_time,
+            avg_trust_score=analysis_result.get("avg_trust_score", 0),
+            errors=analysis_result.get("errors", [])
+        )
+        
+    except Exception as e:
+        # Cleanup on error
+        if temp_dir and temp_dir.exists():
+            shutil.rmtree(temp_dir, ignore_errors=True)
+        
+        raise HTTPException(
+            status_code=500,
+            detail=f"Processing failed: {str(e)}"
+        )
+
+@router.post("/reports/{session_id}")
+async def generate_reports(
+    session_id: str,
+    report_request: ReportRequest = None
+):
+    if report_request is None:
+        report_request = ReportRequest()
+
+    if session_id not in _sessions:
+        raise HTTPException(status_code=404, detail="Session not found or expired")
+
+    session_data = _sessions[session_id]
+    registry = session_data["registry"]
+
+    # 🔴 RAW data contains VulnerabilityFinding
+    raw_report_data = session_data["report_data"]
+
+    # ✅ JSON-safe COPY for report generation
+    report_data = make_json_safe(raw_report_data)
+
+    try:
+        generator = ReportGenerator(evidence_registry=registry)
+
+        if report_request.view_type.value == "both":
+            reports = generator.generate_both_views(
+                report_data,
+                output_format=report_request.format.value
+            )
+            report_paths = {
+                key: str(Path(path).resolve())
+                for key, path in reports.items()
+            }
+
+        else:
+            report = generator.generate_report(
+                report_data,
+                view_type=report_request.view_type.value,
+                output_format=report_request.format.value
+            )
+            report_paths = {report_request.view_type.value: str(report)}
+
+        _sessions[session_id]["report_paths"] = report_paths
+
+        response_payload = {
+            "status": "reports_generated",
+            "session_id": session_id,
+            "findings_count": len(report_data.get("findings", [])),
+            "analysis_time": 0,
+            "avg_trust_score": report_data.get("statistics", {}).get("avg_trust_score", 0),
+            "report_paths": report_paths
+        }
+
+        return JSONResponse(content=make_json_safe(response_payload))
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Report generation failed: {str(e)}"
+        )
+
+@router.get("/reports/{session_id}/{report_type}")
+async def download_report(
+    session_id: str,
+    report_type: str,
+    format: str = "pdf"
+):
+    """
+    Download a generated report.
+
+    report_type: executive, technical, or combined
+    format: pdf or md
+    """
+    if session_id not in _sessions:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    session_data = _sessions[session_id]
+    report_paths = session_data.get("report_paths", {})
+
+    # -----------------------------
+    # COMBINED DOWNLOAD (ZIP)
+    # -----------------------------
+    if report_type == "combined":
+        if not all(rp in report_paths for rp in ["executive", "technical"]):
+            raise HTTPException(status_code=404, detail="Both reports not generated")
+
+        zip_path = Path("reports") / f"audit_reports_{session_id}.zip"
+
+        with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
+            for rp_type, rp_path in report_paths.items():
+                rp_path = Path(rp_path)
+                if rp_path.exists():
+                    zipf.write(
+                        rp_path,
+                        arcname=rp_path.name
+                    )
+
+        return FileResponse(
+            path=zip_path,
+            media_type="application/zip",
+            filename=zip_path.name,
+            headers={
+                "Content-Disposition": f'attachment; filename="{zip_path.name}"',
+                "X-Content-Type-Options": "nosniff"
+            }
+        )
+
+    # -----------------------------
+    # SINGLE REPORT DOWNLOAD
+    # -----------------------------
+    if report_type not in report_paths:
+        raise HTTPException(status_code=404, detail=f"{report_type} report not found")
+
+    report_path = Path(report_paths[report_type])
+
+    if not report_path.exists():
+        raise HTTPException(status_code=404, detail="Report file not found")
+
+    # Determine media type
+    if report_path.suffix.lower() == ".pdf":
+        media_type = "application/pdf"
+    else:
+        media_type = "text/markdown"
+
+    return FileResponse(
+        path=report_path,
+        media_type=media_type,
+        filename=report_path.name,
+        headers={
+            "Content-Disposition": f'attachment; filename="{report_path.name}"',
+            "X-Content-Type-Options": "nosniff"
+        }
+    )
+
+@router.get("/session/{session_id}/data")
+async def get_session_data(session_id: str):
+    """Get analysis data for a session (JSON format)."""
+    if session_id not in _sessions:
+        raise HTTPException(status_code=404, detail="Session not found")
+    
+    session_data = _sessions[session_id]
+    
+    # Remove large objects for JSON response
+    response_data = {
+        "session_id": session_id,
+        "created_at": session_data["created_at"],
+        "company_context": session_data["company_context"],
+        "report_data": session_data.get("report_data", {}),
+        "report_paths": session_data.get("report_paths", {})
+    }
+    
+    safe_response = make_json_safe(response_data)
+    return JSONResponse(content=safe_response)
+
+@router.get("/sessions")
+async def list_sessions():
+    """List all active sessions."""
+    sessions_list = []
+    for session_id, data in _sessions.items():
+        sessions_list.append({
+            "session_id": session_id,
+            "created_at": data["created_at"],
+            "findings_count": len(data.get("report_data", {}).get("findings", [])),
+            "company_context": data.get("company_context", "")[:50] + "..."
+        })
+    
+    return {"sessions": sessions_list}
+
+@router.post("/api/v1/session/recover")
+async def recover_session(old_session_id: str, new_data: dict):
+    """
+    Attempt to recover data from expired session
+    Useful if user accidentally closed browser
+    """
+    # Check if session exists in any form
+    # This could check a separate archive table
+    pass
+
+def cleanup_temp_dir(temp_dir: Path):
+    """Background task to cleanup temporary directory."""
+    try:
+        if temp_dir.exists():
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    except:
+        pass

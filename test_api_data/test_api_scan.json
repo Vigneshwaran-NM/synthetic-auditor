@@ -1,0 +1,1 @@
+[{"name": "API Test SQL Injection", "severity": "Critical", "description": "Test vulnerability for API", "cve": "CVE-2024-99999", "evidence": {"url": "https://test.com/login", "parameter": "id"}}, {"name": "API Test XSS", "severity": "High", "description": "Cross-site scripting test", "evidence": {"url": "https://test.com/search", "parameter": "q"}}]
