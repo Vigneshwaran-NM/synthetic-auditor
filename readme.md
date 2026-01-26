@@ -61,7 +61,7 @@ In an era of increasing data breaches and regulatory scrutiny, security consulta
 
 ---
 
-## Architecture Overview
+## 🏗️ Architecture Overview
 
 ```mermaid
 graph TB
