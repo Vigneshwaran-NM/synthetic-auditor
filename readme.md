@@ -7,8 +7,10 @@
 ![FastAPI](https://img.shields.io/badge/fastapi-0.104.1-009688)
 ![Ollama](https://img.shields.io/badge/ollama-latest-orange)
 ![GPU](https://img.shields.io/badge/GPU-required-important)
+
 ---
-[Key Features](#-key-features) • [Architecture Overview](#-Architecture-Overview) • [Tech Stack](#-technology-stack) • [Contributors](#-Contributors)
+
+[Demo](#-demo) • [Key Features](#-key-features) • [Architecture Overview](#-architecture-overview) • [Tech Stack](#-technology-stack) • [Contributors](#-contributors)
 
 **Enterprise-grade vulnerability analysis with 100% data sovereignty. Transform raw security scans into executive and technical-ready reports using local AI—no cloud, no data exfiltration, complete privacy.**
 
@@ -30,6 +32,66 @@ In an era of increasing data breaches and regulatory scrutiny, security consulta
 - ✅ **Dual-Perspective Reports** - Executive & Technical views from single analysis
 - ✅ **Trust Scoring System** - Confidence metrics for AI findings
 - ✅ **GPU-Optimized** - RTX 4060 delivers 10-15s per finding
+
+---
+## 📊 Demo
+
+> Below are real screenshots from the running **Synthetic Auditor** system — fully offline.
+
+### 🏠 Landing Page
+<img src="synthetic-auditor-screenshots/home.png" width="900"/>
+
+---
+
+### 📤 Upload Vulnerability Scans
+Supports ZIP, Nessus XML, Burp JSON, PCAP, logs, and CSV.
+
+<img src="synthetic-auditor-screenshots/upload.png" width="900"/>
+
+---
+
+### 📋 Vulnerability Findings Dashboard
+Severity-based grouping with AI confidence scores.
+
+<img src="synthetic-auditor-screenshots/findings.png" width="900"/>
+
+---
+
+### 🔍 Detailed Finding – SQL Injection
+Business impact, technical analysis, and remediation.
+
+<img src="synthetic-auditor-screenshots/detailed-findings-1.png" width="900"/>
+
+---
+
+### 🔐 Detailed Finding – SSL Certificate Expiry
+Risk prioritization with actionable remediation steps.
+
+<img src="synthetic-auditor-screenshots/detailed-findings-2.png" width="900"/>
+
+---
+
+### 🔗 Evidence Traceability
+Every AI claim is backed by verifiable evidence.
+
+<img src="synthetic-auditor-screenshots/evidence-trace.png" width="900"/>
+
+---
+
+### 📄 Executive Report (Business View)
+High-level risk summary for leadership.
+
+<img src="synthetic-auditor-screenshots/exec-report.png" width="900"/>
+
+---
+
+### 🧪 Technical Report (Security Team View)
+Deep technical breakdown with compliance mapping.
+
+<p align="center">
+  <img src="synthetic-auditor-screenshots/tech-report-1.png" width="420"/>
+  <img src="synthetic-auditor-screenshots/tech-report-2.png" width="420"/>
+</p>
 
 ---
 
